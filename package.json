@@ -1,11 +1,11 @@
 {
-  "name": "@streamdota/gsi-parser",
+  "name": "@esportlayers/morphling",
   "version": "1.0.0",
-  "description": "Library to parse GSI events from raw data",
+  "description": "Esportlayers dota gsi events parsing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "repository": "https://github.com/michaelketzer/streamdota-gsi-parser",
-  "author": "Michael Ketzer",
+  "repository": "git@github.com:michaelketzer/streamdota-morphling.git",
+  "author": "Michael Ketzer <46134133+michaelketzer@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
   "dependencies": {},
@@ -25,7 +25,7 @@
     "test": "jest --config jestconfig.json",
 
     "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
+    "prepublishOnly" : "npm run lint",
     "preversion" : "npm run lint",
     "version" : "npm run format && git add -A src",
     "postversion" : "git push && git push --tags"
@@ -33,5 +33,5 @@
   "files": [
     "lib/**/*"
   ],
-  "keywords": ["Dota2", "GSI", "Parser"]
+  "keywords": ["Dota2", "GSI", "Parser", "esportslayers", "streamdota"]
 }
