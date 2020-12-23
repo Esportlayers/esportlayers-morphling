@@ -21,15 +21,42 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
         radiantWinChance: newData.radiant_win_chance,
         type: isPlaying ? 'playing' : 'observing',
       };
+      const isPlayingWin = isPlaying ? data.player.team_name === newData.win_team : false;
+
       events.push({
         event: MorphlingEventTypes.gsi_gamedata,
         value: gameData,
+      }, {
+        event: MorphlingEventTypes.gsi_game_paused,
+        value: newData.paused,
+      }, {
+        event: MorphlingEventTypes.gsi_game_state,
+        value: newData.game_state,
+      }, {
+        event: MorphlingEventTypes.gsi_game_win_chance,
+        value: newData.radiant_win_chance,
+      }, {
+        event: MorphlingEventTypes.gsi_game_activity,
+        value: isPlaying ? 'playing' : 'observing',
+      }, {
+        event: MorphlingEventTypes.gsi_game_winner,
+        value: { isPlayingWin, winnerTeam: newData.win_team },
+      }, {
+        event: MorphlingEventTypes.gsi_match_id,
+        value: +newData.matchid,
       });
       await setObj(key(clientId), gameData);
     }
 
     if (oldData) {
       const changeSet: Partial<GameData> = {};
+      if (oldData.matchId !== +newData.matchid) {
+        changeSet.matchId = +newData.matchid;
+        events.push({
+          event: MorphlingEventTypes.gsi_match_id,
+          value: +newData.matchid,
+        });
+      }
       if (oldData.paused !== newData.paused) {
         changeSet.paused = newData.paused;
         events.push({
@@ -91,6 +118,10 @@ export async function reset(clientId: string): Promise<MorphlingEvent[]> {
 
   return [
     {
+      event: MorphlingEventTypes.gsi_match_id,
+      value: null,
+    },
+    {
       event: MorphlingEventTypes.gsi_gamedata,
       value: null,
     },
@@ -120,6 +151,10 @@ export async function reset(clientId: string): Promise<MorphlingEvent[]> {
 export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
   const data = (await getObj(key(clientId))) as GameData | null;
   return [
+    {
+      event: MorphlingEventTypes.gsi_match_id,
+      value: data?.matchId || null,
+    },
     {
       event: MorphlingEventTypes.gsi_gamedata,
       value: data || null,
