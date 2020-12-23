@@ -119,34 +119,30 @@ export async function reset(clientId: string): Promise<MorphlingEvent[]> {
 
 export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
   const data = (await getObj(key(clientId))) as GameData | null;
-  if (data) {
-    return [
-      {
-        event: MorphlingEventTypes.gsi_gamedata,
-        value: data,
-      },
-      {
-        event: MorphlingEventTypes.gsi_game_paused,
-        value: data.paused,
-      },
-      {
-        event: MorphlingEventTypes.gsi_game_state,
-        value: data.gameState,
-      },
-      {
-        event: MorphlingEventTypes.gsi_game_winner,
-        value: { isPlayingWin: false, winnerTeam: 'none' },
-      },
-      {
-        event: MorphlingEventTypes.gsi_game_win_chance,
-        value: data.radiantWinChance,
-      },
-      {
-        event: MorphlingEventTypes.gsi_game_activity,
-        value: data.type,
-      },
-    ];
-  }
-
-  return [];
+  return [
+    {
+      event: MorphlingEventTypes.gsi_gamedata,
+      value: data || null,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_paused,
+      value: data?.paused || false,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_state,
+      value: data?.gameState || null,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_winner,
+      value: { isPlayingWin: false, winnerTeam: data?.winner || 'none' },
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_win_chance,
+      value: data?.radiantWinChance || 0,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_activity,
+      value: data?.type || null,
+    },
+  ];
 }
