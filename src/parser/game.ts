@@ -23,28 +23,36 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
       };
       const isPlayingWin = isPlaying ? data.player.team_name === newData.win_team : false;
 
-      events.push({
-        event: MorphlingEventTypes.gsi_gamedata,
-        value: gameData,
-      }, {
-        event: MorphlingEventTypes.gsi_game_paused,
-        value: newData.paused,
-      }, {
-        event: MorphlingEventTypes.gsi_game_state,
-        value: newData.game_state,
-      }, {
-        event: MorphlingEventTypes.gsi_game_win_chance,
-        value: newData.radiant_win_chance,
-      }, {
-        event: MorphlingEventTypes.gsi_game_activity,
-        value: isPlaying ? 'playing' : 'observing',
-      }, {
-        event: MorphlingEventTypes.gsi_game_winner,
-        value: { isPlayingWin, winnerTeam: newData.win_team },
-      }, {
-        event: MorphlingEventTypes.gsi_match_id,
-        value: +newData.matchid,
-      });
+      events.push(
+        {
+          event: MorphlingEventTypes.gsi_gamedata,
+          value: gameData,
+        },
+        {
+          event: MorphlingEventTypes.gsi_game_paused,
+          value: newData.paused,
+        },
+        {
+          event: MorphlingEventTypes.gsi_game_state,
+          value: newData.game_state,
+        },
+        {
+          event: MorphlingEventTypes.gsi_game_win_chance,
+          value: newData.radiant_win_chance,
+        },
+        {
+          event: MorphlingEventTypes.gsi_game_activity,
+          value: isPlaying ? 'playing' : 'observing',
+        },
+        {
+          event: MorphlingEventTypes.gsi_game_winner,
+          value: { isPlayingWin, winnerTeam: newData.win_team },
+        },
+        {
+          event: MorphlingEventTypes.gsi_match_id,
+          value: +newData.matchid,
+        },
+      );
       await setObj(key(clientId), gameData);
     }
 
@@ -153,11 +161,11 @@ export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
   return [
     {
       event: MorphlingEventTypes.gsi_match_id,
-      value: data?.matchId || null,
+      value: data?.matchId || null,
     },
     {
       event: MorphlingEventTypes.gsi_gamedata,
-      value: data || null,
+      value: data || null,
     },
     {
       event: MorphlingEventTypes.gsi_game_paused,
@@ -173,7 +181,7 @@ export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
     },
     {
       event: MorphlingEventTypes.gsi_game_win_chance,
-      value: data?.radiantWinChance || 0,
+      value: data?.radiantWinChance || 0,
     },
     {
       event: MorphlingEventTypes.gsi_game_activity,
