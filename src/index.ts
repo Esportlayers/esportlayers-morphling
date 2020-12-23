@@ -28,6 +28,7 @@ export enum MorphlingEventTypes {
   gsi_draft = 'gsi_draft',
   gsi_player_state = 'gsi_player_state',
   gsi_roshan = 'gsi_roshan',
+  gsi_connected = 'gsi_connected',
 }
 
 export interface MorphlingEvent {
