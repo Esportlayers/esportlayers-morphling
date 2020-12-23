@@ -1,138 +1,152 @@
 import { GameData, GSIMapData, MorphlingEvent, MorphlingEventTypes } from '../index';
-import {getObj, setObj} from '../index';
+import { getObj, setObj } from '../index';
 
 export function key(userId: string): string {
-    return `gsi_${userId}_game`;
+  return `gsi_${userId}_game`;
 }
 
 export async function process(clientId: string, data: any): Promise<MorphlingEvent[]> {
-    const events: MorphlingEvent[] = [];
-    const oldData = (await getObj(key(clientId))) as GameData | null;
-    const newData = data?.map as GSIMapData | null;
+  const events: MorphlingEvent[] = [];
+  const oldData = (await getObj(key(clientId))) as GameData | null;
+  const newData = data?.map as GSIMapData | null;
 
-    if(newData) {
-        if(!oldData || +newData.matchid !== oldData.matchId) {
-            const isPlaying = data?.player.hasOwnProperty('steamid');
-            const gameData = {
-                matchId: +newData.matchid,
-                gameState: newData.game_state,
-                paused: newData.paused,
-                winner: newData.win_team,
-                radiantWinChance: newData.radiant_win_chance,
-                type: isPlaying ? 'playing' : 'observing',
-            };
-            events.push({
-                event: MorphlingEventTypes.gsi_gamedata,
-                value: gameData,
-            });
-            await setObj(key(clientId), gameData);
-        }
-
-        if(oldData) {
-            const changeSet: Partial<GameData> = {};
-            if(oldData.paused !== newData.paused) {
-                changeSet.paused = newData.paused;
-                events.push({
-                    event: MorphlingEventTypes.gsi_game_paused,
-                    value: newData.paused,
-                });
-            }
-
-            if(oldData.gameState !== newData.game_state) {
-                changeSet.gameState = newData.game_state;
-                events.push({
-                    event: MorphlingEventTypes.gsi_game_state,
-                    value: newData.game_state,
-                });
-            }
-
-            if(oldData.winner !== newData.win_team) {
-                const isPlayingWin = oldData.type === 'playing' ? data.player.team_name === newData.win_team : false;
-                changeSet.winner = newData.win_team;
-
-                events.push({
-                    event: MorphlingEventTypes.gsi_game_winner,
-                    value: {isPlayingWin, winnerTeam: newData.win_team},
-                });
-            }
-
-            if(oldData.radiantWinChance !== newData.radiant_win_chance) {
-                changeSet.radiantWinChance = newData.radiant_win_chance;
-
-                events.push({
-                    event: MorphlingEventTypes.gsi_game_win_chance,
-                    value: newData.radiant_win_chance,
-                });
-            }
-
-            const activity = data?.player.hasOwnProperty('steamid') ? 'playing' : 'observing';
-            if(activity !== oldData.type) {
-                changeSet.type = activity;
-
-                events.push({
-                    event: MorphlingEventTypes.gsi_game_activity,
-                    value: activity,
-                });
-            }
-
-            if(Object.keys(changeSet).length > 0) {
-                await setObj(key(clientId), {...oldData, ...changeSet});
-            }
-        }
-    } else if(oldData) {
-        return await reset(clientId);
+  if (newData) {
+    if (!oldData || +newData.matchid !== oldData.matchId) {
+      const isPlaying = data?.player.hasOwnProperty('steamid');
+      const gameData = {
+        matchId: +newData.matchid,
+        gameState: newData.game_state,
+        paused: newData.paused,
+        winner: newData.win_team,
+        radiantWinChance: newData.radiant_win_chance,
+        type: isPlaying ? 'playing' : 'observing',
+      };
+      events.push({
+        event: MorphlingEventTypes.gsi_gamedata,
+        value: gameData,
+      });
+      await setObj(key(clientId), gameData);
     }
 
-    return events;
+    if (oldData) {
+      const changeSet: Partial<GameData> = {};
+      if (oldData.paused !== newData.paused) {
+        changeSet.paused = newData.paused;
+        events.push({
+          event: MorphlingEventTypes.gsi_game_paused,
+          value: newData.paused,
+        });
+      }
+
+      if (oldData.gameState !== newData.game_state) {
+        changeSet.gameState = newData.game_state;
+        events.push({
+          event: MorphlingEventTypes.gsi_game_state,
+          value: newData.game_state,
+        });
+      }
+
+      if (oldData.winner !== newData.win_team) {
+        const isPlayingWin = oldData.type === 'playing' ? data.player.team_name === newData.win_team : false;
+        changeSet.winner = newData.win_team;
+
+        events.push({
+          event: MorphlingEventTypes.gsi_game_winner,
+          value: { isPlayingWin, winnerTeam: newData.win_team },
+        });
+      }
+
+      if (oldData.radiantWinChance !== newData.radiant_win_chance) {
+        changeSet.radiantWinChance = newData.radiant_win_chance;
+
+        events.push({
+          event: MorphlingEventTypes.gsi_game_win_chance,
+          value: newData.radiant_win_chance,
+        });
+      }
+
+      const activity = data?.player.hasOwnProperty('steamid') ? 'playing' : 'observing';
+      if (activity !== oldData.type) {
+        changeSet.type = activity;
+
+        events.push({
+          event: MorphlingEventTypes.gsi_game_activity,
+          value: activity,
+        });
+      }
+
+      if (Object.keys(changeSet).length > 0) {
+        await setObj(key(clientId), { ...oldData, ...changeSet });
+      }
+    }
+  } else if (oldData) {
+    return await reset(clientId);
+  }
+
+  return events;
 }
 
 export async function reset(clientId: string): Promise<MorphlingEvent[]> {
-    await setObj(key(clientId), null);
+  await setObj(key(clientId), null);
 
-    return [{
-        event: MorphlingEventTypes.gsi_gamedata,
-        value: null,
-    }, {
-        event: MorphlingEventTypes.gsi_game_paused,
-        value: false,
-    }, {
-        event: MorphlingEventTypes.gsi_game_state,
-        value: null,
-    }, {
-        event: MorphlingEventTypes.gsi_game_winner,
-        value: {isPlayingWin: false, winnerTeam: 'none'},
-    }, {
-        event: MorphlingEventTypes.gsi_game_win_chance,
-        value: 0,
-    }, {
-        event: MorphlingEventTypes.gsi_game_activity,
-        value: null,
-    }];
+  return [
+    {
+      event: MorphlingEventTypes.gsi_gamedata,
+      value: null,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_paused,
+      value: false,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_state,
+      value: null,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_winner,
+      value: { isPlayingWin: false, winnerTeam: 'none' },
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_win_chance,
+      value: 0,
+    },
+    {
+      event: MorphlingEventTypes.gsi_game_activity,
+      value: null,
+    },
+  ];
 }
 
 export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
-    const data = (await getObj(key(clientId))) as GameData | null;
-    if(data) {
-        return [{
-            event: MorphlingEventTypes.gsi_gamedata,
-            value: data,
-        }, {
-            event: MorphlingEventTypes.gsi_game_paused,
-            value: data.paused,
-        }, {
-            event: MorphlingEventTypes.gsi_game_state,
-            value: data.gameState,
-        }, {
-            event: MorphlingEventTypes.gsi_game_winner,
-            value: {isPlayingWin: false, winnerTeam: 'none'},
-        }, {
-            event: MorphlingEventTypes.gsi_game_win_chance,
-            value: data.radiantWinChance,
-        }, {
-            event: MorphlingEventTypes.gsi_game_activity,
-            value: data.type,
-        }];
-    }
+  const data = (await getObj(key(clientId))) as GameData | null;
+  if (data) {
+    return [
+      {
+        event: MorphlingEventTypes.gsi_gamedata,
+        value: data,
+      },
+      {
+        event: MorphlingEventTypes.gsi_game_paused,
+        value: data.paused,
+      },
+      {
+        event: MorphlingEventTypes.gsi_game_state,
+        value: data.gameState,
+      },
+      {
+        event: MorphlingEventTypes.gsi_game_winner,
+        value: { isPlayingWin: false, winnerTeam: 'none' },
+      },
+      {
+        event: MorphlingEventTypes.gsi_game_win_chance,
+        value: data.radiantWinChance,
+      },
+      {
+        event: MorphlingEventTypes.gsi_game_activity,
+        value: data.type,
+      },
+    ];
+  }
 
-    return [];
+  return [];
 }
