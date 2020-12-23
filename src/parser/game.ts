@@ -1,6 +1,5 @@
-import { GameData, GSIMapData } from '../GSIData';
+import { GameData, GSIMapData, MorphlingEvent, MorphlingEventTypes } from '../index';
 import {getObj, setObj} from '../index';
-import {MorphlingEvent, MorphlingEventTypes} from '../MorphlingEvents';
 
 export function key(userId: string): string {
     return `gsi_${userId}_game`;
@@ -8,7 +7,7 @@ export function key(userId: string): string {
 
 export async function process(clientId: string, data: any): Promise<MorphlingEvent[]> {
     const events: MorphlingEvent[] = [];
-    const oldData = await getObj<GameData>(key(clientId));
+    const oldData = (await getObj(key(clientId))) as GameData | null;
     const newData = data?.map as GSIMapData | null;
 
     if(newData) {
@@ -112,7 +111,7 @@ export async function reset(clientId: string): Promise<MorphlingEvent[]> {
 }
 
 export async function getEvent(clientId: string): Promise<MorphlingEvent[]> {
-    const data = await getObj<GameData>(key(clientId));
+    const data = (await getObj(key(clientId))) as GameData | null;
     if(data) {
         return [{
             event: MorphlingEventTypes.gsi_gamedata,

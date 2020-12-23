@@ -1,5 +1,4 @@
-import {getObj, setObj} from '../index';
-import {MorphlingEvent, MorphlingEventTypes} from '../MorphlingEvents';
+import {getObj, setObj, MorphlingEvent, MorphlingEventTypes} from '../index';
 
 const aegisItemName = 'item_aegis';
 
