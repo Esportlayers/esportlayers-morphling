@@ -27,6 +27,7 @@ export enum MorphlingEventTypes {
   gsi_game_activity = 'gsi_game_activity',
   gsi_draft = 'gsi_draft',
   gsi_player_state = 'gsi_player_state',
+  gsi_players_state = 'gsi_players_state',
   gsi_roshan = 'gsi_roshan',
   gsi_connected = 'gsi_connected',
   gsi_match_id = 'gsi_match_id',
