@@ -258,7 +258,7 @@ export interface TeamDraftData {
 }
 
 export interface DraftData {
-  team: number;
+  activeteam: number;
   pick: boolean;
   activeteam_time_remaining: number;
   radiant_bonus_time: number;
