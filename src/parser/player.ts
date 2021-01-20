@@ -92,7 +92,7 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
     if (newPlayerState && newHeroState) {
       const players = transformState(newPlayerState, newHeroState);
       await setObj(obsKey(clientId), players);
-      await setObj(obsKey(clientId), '' + dayjs().unix());
+      await setObj(lastUpdateKey(clientId), '' + dayjs().unix());
 
       return [
         {
