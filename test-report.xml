@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testExecutions version="1">
+  <file path="/home/hcomuser/dev/streamdota/esportlayers-morphling/src/tests/roshan.test.ts">
+    <testCase name="Testing roshan state parsing No state" duration="3"/>
+    <testCase name="Testing roshan state parsing New state" duration="1"/>
+    <testCase name="Roshan lifecycle" duration="2"/>
+  </file>
+</testExecutions>

@@ -6,5 +6,11 @@
     "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
     "roots": [
         "src/"
-    ]
+    ],
+    "coveragePathIgnorePatterns": [
+        "/node_modules/",
+        "src/test/"
+    ],
+    "collectCoverage": true,
+    "testResultsProcessor": "jest-sonar-reporter"
 }
