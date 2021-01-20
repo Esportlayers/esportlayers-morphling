@@ -9,7 +9,8 @@
     ],
     "coveragePathIgnorePatterns": [
         "/node_modules/",
-        "src/test/"
+        "src/tests/",
+        "src/tests/utils"
     ],
     "collectCoverage": true,
     "testResultsProcessor": "jest-sonar-reporter"

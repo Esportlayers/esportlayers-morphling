@@ -3,6 +3,6 @@
   <file path="/home/hcomuser/dev/streamdota/esportlayers-morphling/src/tests/roshan.test.ts">
     <testCase name="Testing roshan state parsing No state" duration="3"/>
     <testCase name="Testing roshan state parsing New state" duration="1"/>
-    <testCase name="Roshan lifecycle" duration="2"/>
+    <testCase name="Roshan lifecycle" duration="7"/>
   </file>
 </testExecutions>
