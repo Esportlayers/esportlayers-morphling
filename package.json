@@ -1,6 +1,6 @@
 {
   "name": "@esportlayers/morphling",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Esportlayers dota gsi events parsing",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -27,7 +27,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
-    "test": "jest --config jestconfig.json",
+    "test": "jest --config jestconfig.json --watch",
     "test:ci": "jest  --config jestconfig.json --ci --reporters='default' --reporters='./github-actions-reporter'",
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",

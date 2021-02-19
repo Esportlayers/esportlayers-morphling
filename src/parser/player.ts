@@ -25,10 +25,10 @@ function lastUpdateKey(userId: string): string {
   return `gsi_${userId}_player_state_last`;
 }
 
-function mergePlayerHero(player: GsiPlayerState, playerHero: GsiHeroState): PlayerState {
+function mergePlayerHero(player: GsiPlayerState, playerHero?: GsiHeroState): PlayerState {
   return {
     steamId: player.steamid,
-    heroId: playerHero.id,
+    heroId: playerHero?.id ?? 0,
     kills: player.kills,
     deaths: player.deaths,
     assists: player.assists,
@@ -52,15 +52,15 @@ function mergePlayerHero(player: GsiPlayerState, playerHero: GsiHeroState): Play
     item_gold_spent: player.item_gold_spent,
     gold_lost_to_death: player.gold_lost_to_death,
     gold_spent_on_buybacks: player.gold_spent_on_buybacks,
-    level: playerHero.level,
-    alive: playerHero.alive,
-    respawn_seconds: playerHero.respawn_seconds,
-    buyback_cost: playerHero.buyback_cost,
-    buyback_cooldown: playerHero.buyback_cooldown,
-    health_percent: playerHero.health_percent,
-    mana_percent: playerHero.mana_percent,
-    smoked: playerHero.smoked,
-    canBuyBack: playerHero.buyback_cooldown === 0 && playerHero.buyback_cost < player.gold,
+    level: playerHero?.level ?? 0,
+    alive: playerHero?.alive ?? false,
+    respawn_seconds: playerHero?.respawn_seconds ?? 0,
+    buyback_cost: playerHero?.buyback_cost ?? 0,
+    buyback_cooldown: playerHero?.buyback_cooldown ?? 0,
+    health_percent: playerHero?.health_percent ?? 0,
+    mana_percent: playerHero?.mana_percent ?? 0,
+    smoked: playerHero?.smoked ?? false,
+    canBuyBack: playerHero?.buyback_cooldown === 0 && playerHero?.buyback_cost < player.gold,
   };
 }
 
