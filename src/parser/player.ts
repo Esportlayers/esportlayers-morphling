@@ -1,6 +1,5 @@
 import {
   GameData,
-  getObj,
   GsiHero,
   GsiHeroState,
   GsiPlayer,
@@ -8,10 +7,12 @@ import {
   MorphlingEvent,
   MorphlingEventTypes,
   PlayerState,
+  getObj,
   setObj,
 } from '..';
-import { key as gameDatakey } from './game';
+
 import dayjs from 'dayjs';
+import { key as gameDatakey } from './game';
 import { isEqual } from 'lodash';
 
 function obsKey(userId: string): string {
@@ -84,7 +85,7 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
   const gameData = (await getObj(gameDatakey(clientId))) as GameData;
   const lastUpdate = +((await getObj(lastUpdateKey(clientId))) || 0);
 
-  if (gameData && gameData.type === 'observing' && (!lastUpdate || +lastUpdate + 5 < dayjs().unix())) {
+  if (gameData && gameData.type === 'observing' && (!lastUpdate || +lastUpdate + 10 < dayjs().unix())) {
     const oldData = (await getObj(obsKey(clientId))) as PlayerState[];
     const newPlayerState = data?.player as GsiPlayer | null;
     const newHeroState = data?.hero as GsiHero | null;
@@ -103,7 +104,7 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
     } else if (oldData) {
       return await reset(clientId);
     }
-  } else if (gameData && gameData.type === 'playing') {
+  } else if (gameData && gameData.type === 'playing' && (!lastUpdate || +lastUpdate + 10 < dayjs().unix())) {
     const oldData = (await getObj(key(clientId))) as PlayerState;
     const newPlayerState = data?.player as GsiPlayerState | null;
     const newHeroState = data?.hero as GsiHeroState | null;
@@ -111,6 +112,8 @@ export async function process(clientId: string, data: any): Promise<MorphlingEve
       const newState = mergePlayerHero(newPlayerState, newHeroState);
       if (!isEqual(oldData, newState)) {
         await setObj(key(clientId), newState);
+        await setObj(lastUpdateKey(clientId), '' + dayjs().unix());
+
         return [
           {
             event: MorphlingEventTypes.gsi_player_state,
